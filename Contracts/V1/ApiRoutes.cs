@@ -12,6 +12,10 @@
         {
             public const string GetAll = Base + "/accounts";
 
+            public const string Create = Base + "/accounts";
+
+            public const string GetById = Base + "/accounts/{id}";
+
         }
     }
 }

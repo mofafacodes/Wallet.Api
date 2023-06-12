@@ -13,6 +13,8 @@ namespace Wallet.Api.Contracts.V1.Response
 
         public string AcountNumber { get; set; }
 
+        public string Email { get; set; }
+
         public string Owner { get; set; }
 
         public string PhoneNumber { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Wallet.Api.Contracts.V1.Requests
 {
-    public class Create : Constant
+    public class Create
     {
         public string Name { get; set; }
 
@@ -11,6 +11,8 @@ namespace Wallet.Api.Contracts.V1.Requests
         public string AccountScheme { get; set; }
 
         public string AcountNumber { get; set; }
+
+        public string Email { get; set; }
 
         public string Owner { get; set; }
 

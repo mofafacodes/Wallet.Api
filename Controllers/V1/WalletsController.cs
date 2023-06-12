@@ -45,6 +45,41 @@ namespace Wallet.Api.Controllers.V1
             return Ok(respone);
         }
 
+        [HttpDelete(ApiRoutes.Accounts.Delete)]
+        public IActionResult Delele([FromRoute] Guid id)
+        {
+          
+            var deleted = _accounts.DeleteAccount(id);
+
+            if (deleted)
+            {
+                return NoContent();
+            }
+
+            return NotFound();
+        }
+
+        [HttpPut(ApiRoutes.Accounts.Update)]
+        public IActionResult Update([FromRoute]Guid id, [FromBody] Update accountUpdate)
+        {
+            var account = new Account
+            {
+                Id = id,
+                Name = accountUpdate.Name,
+                CreatedAt = accountUpdate.CreatedAt,
+                UpdatedAt = accountUpdate.UpdatedAt,
+            };
+
+            var updated = _accounts.UpdateAccount(account);
+
+            if (updated)
+            {
+                return Ok(account);
+            }
+
+            return NotFound();
+        }
+
         [HttpPost(ApiRoutes.Accounts.Create)]
         public IActionResult Create([FromBody] Create accountRequest )
         {

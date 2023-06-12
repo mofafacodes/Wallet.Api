@@ -24,6 +24,15 @@ namespace Wallet.Api.Services
             }
         }
 
+        public bool DeleteAccount(Guid id)
+        {
+            var account = GetAccountById(id);
+
+            _accounts.Remove(account);
+
+            return true;
+        }
+
         public Account GetAccountById(Guid id)
         {
             return _accounts.SingleOrDefault(x =>  x.Id == id);
@@ -33,6 +42,20 @@ namespace Wallet.Api.Services
         {
             return _accounts;
 
+        }
+
+        public bool UpdateAccount(Account accountToUpdate)
+        {
+            var existingAccount = GetAccountById(accountToUpdate.Id) != null;
+
+            if(!existingAccount)
+            {
+                return false;
+            }
+
+            var index = _accounts.FindIndex(x => x.Id == accountToUpdate.Id);
+            _accounts[index] = accountToUpdate;
+            return true;
         }
     }
 }

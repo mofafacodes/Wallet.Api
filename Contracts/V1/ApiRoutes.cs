@@ -16,6 +16,10 @@
 
             public const string GetById = Base + "/accounts/{id}";
 
+            public const string Update = Base + "/accounts/{id}";
+
+            public const string Delete = Base + "/accounts/{id}";
+
         }
     }
 }

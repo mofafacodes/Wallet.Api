@@ -1,61 +1,68 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Wallet.Api.Data;
 using Wallet.Api.Domain;
 
 namespace Wallet.Api.Services
 {
     public class AccountService : IAccountService
     {
-        private List<Account> _accounts;
+        //injecting Db as dependency here
+        private readonly DataContext _dataContext;
 
-        public AccountService() 
+        public AccountService(DataContext dataContext) 
         {
-            _accounts = new List<Account>();
-            for (int i = 0; i < 5; i++)
-            {
-                _accounts.Add(new Account()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = $"Account Name{i}",
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                });
-            }
+            _dataContext = dataContext;
         }
 
-        public bool DeleteAccount(Guid id)
+        public async Task<bool> CreateAccountAsync(Account account)
         {
-            var account = GetAccountById(id);
+           await _dataContext.Accounts.AddAsync(account);
 
-            _accounts.Remove(account);
+           var created = await _dataContext.SaveChangesAsync();
 
-            return true;
+           return created > 0;
         }
 
-        public Account GetAccountById(Guid id)
+      
+
+        public async Task<Account> GetAccountByIdAsync(Guid id)
         {
-            return _accounts.SingleOrDefault(x =>  x.Id == id);
+            return await _dataContext.Accounts.SingleOrDefaultAsync(x =>  x.Id == id);
         }
 
-        public List<Account> GetAccounts()
+        public async Task<List<Account>> GetAccountsAsync()
         {
-            return _accounts;
+            return await _dataContext.Accounts.ToListAsync();
 
         }
 
-        public bool UpdateAccount(Account accountToUpdate)
+        public async Task<bool> UpdateAccountAsync(Account accountToUpdate)
         {
-            var existingAccount = GetAccountById(accountToUpdate.Id) != null;
+            _dataContext.Accounts.Update(accountToUpdate);
 
-            if(!existingAccount)
+            var updated = await _dataContext.SaveChangesAsync();
+            
+            return updated > 0;
+        }
+
+        public async Task<bool> DeleteAccountAsync(Guid id)
+        {
+            var account = await GetAccountByIdAsync(id);
+
+            if(account == null)
             {
                 return false;
             }
 
-            var index = _accounts.FindIndex(x => x.Id == accountToUpdate.Id);
-            _accounts[index] = accountToUpdate;
-            return true;
+            _dataContext.Accounts.Remove(account);
+
+            var deleted = await _dataContext.SaveChangesAsync();
+
+            return deleted > 0;
         }
     }
 }

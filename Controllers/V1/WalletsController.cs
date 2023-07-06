@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wallet.Api.Contracts.V1;
 using Wallet.Api.Contracts.V1.Requests;
 using Wallet.Api.Contracts.V1.Response;
@@ -20,15 +21,15 @@ namespace Wallet.Api.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Accounts.GetAll)]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(_accounts.GetAccounts());
+            return Ok(await _accounts.GetAccountsAsync());
         }
 
         [HttpGet(ApiRoutes.Accounts.GetById)]
-        public IActionResult GetById([FromRoute]Guid id)
+        public async Task<IActionResult> GetById([FromRoute]Guid id)
         {
-            var account = _accounts.GetAccountById(id);
+            var account = await _accounts.GetAccountByIdAsync(id);
             if(account == null)
             {
                 return NotFound();
@@ -46,10 +47,10 @@ namespace Wallet.Api.Controllers.V1
         }
 
         [HttpDelete(ApiRoutes.Accounts.Delete)]
-        public IActionResult Delele([FromRoute] Guid id)
+        public async Task<IActionResult> Delele([FromRoute] Guid id)
         {
           
-            var deleted = _accounts.DeleteAccount(id);
+            var deleted = await _accounts.DeleteAccountAsync(id);
 
             if (deleted)
             {
@@ -60,7 +61,7 @@ namespace Wallet.Api.Controllers.V1
         }
 
         [HttpPut(ApiRoutes.Accounts.Update)]
-        public IActionResult Update([FromRoute]Guid id, [FromBody] Update accountUpdate)
+        public async Task<IActionResult> Update([FromRoute]Guid id, [FromBody] Update accountUpdate)
         {
             var account = new Account
             {
@@ -70,7 +71,7 @@ namespace Wallet.Api.Controllers.V1
                 UpdatedAt = accountUpdate.UpdatedAt,
             };
 
-            var updated = _accounts.UpdateAccount(account);
+            var updated = await _accounts.UpdateAccountAsync(account);
 
             if (updated)
             {
@@ -81,11 +82,10 @@ namespace Wallet.Api.Controllers.V1
         }
 
         [HttpPost(ApiRoutes.Accounts.Create)]
-        public IActionResult Create([FromBody] Create accountRequest )
+        public async Task<IActionResult> Create([FromBody] Create accountRequest )
         {
             //mapping a requrst to a domain object because of the contract exposed to a consumers
             var account = new Account {
-                Id = Guid.NewGuid(),
                 Name = accountRequest.Name,
                 Type = accountRequest.Type,
                 AccountScheme = accountRequest.AccountScheme,
@@ -96,12 +96,7 @@ namespace Wallet.Api.Controllers.V1
                 CreatedAt = DateTimeOffset.UtcNow,
                 UpdatedAt = DateTimeOffset.UtcNow
             };
-
-            if (account.Id != Guid.Empty)
-            {
-                account.Id = Guid.NewGuid();
-            }
-            _accounts.GetAccounts().Add(account);
+            await _accounts.CreateAccountAsync(account);
             //location header specifies where the resource was created
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUrl = baseUrl + "/" + ApiRoutes.Accounts.GetById.Replace("{id}", account.Id.ToString());

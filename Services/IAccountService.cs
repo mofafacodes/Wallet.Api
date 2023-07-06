@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Wallet.Api.Domain;
 
 namespace Wallet.Api.Services
 {
     public interface IAccountService
     {
-        List<Account> GetAccounts();
+        //changing all methods to async because entity framework supports async in its extension methods to retrieve data
+        //IO operations require async
+        Task<List<Account>> GetAccountsAsync();
 
-        Account GetAccountById(Guid id);
+        Task<Account> GetAccountByIdAsync(Guid id);
 
-        bool UpdateAccount(Account accountToUpdate);
+        Task<bool> UpdateAccountAsync(Account accountToUpdate);
 
-        bool DeleteAccount(Guid id);
+        Task<bool> DeleteAccountAsync(Guid id);
+
+        Task<bool> CreateAccountAsync(Account account);
     }
 }
 

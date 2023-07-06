@@ -1,4 +1,5 @@
-﻿using Wallet.Api.Domain;
+﻿using System;
+using Wallet.Api.Domain;
 
 namespace Wallet.Api.Contracts.V1.Requests
 {

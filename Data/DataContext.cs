@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using Wallet.Api.Domain;
 
 namespace Wallet.Api.Data
 {
@@ -10,5 +10,9 @@ namespace Wallet.Api.Data
             : base(options)
         {
         }
+
+        //DbSet used by entity framework to represent a tabel in the database
+        public DbSet<Account> Accounts { get; set; }
+
     }
 }

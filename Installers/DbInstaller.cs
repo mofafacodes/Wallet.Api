@@ -18,7 +18,8 @@ namespace Wallet.Api.Installers
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<DataContext>();
 
-            services.AddScoped<IAccountService, AccountService>();
+            //services.AddScoped<IAccountService, AccountService>();
+            services.AddSingleton<IAccountService, CosmosAccountService>();
         }
     }
 }

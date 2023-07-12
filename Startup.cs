@@ -37,6 +37,12 @@ namespace Wallet.Api
                 app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            //adds the authentication middleware
+            app.UseAuthentication();
+
             var swaggerOptions = new SwaggerOptions();
             //gets the swagger options values from the appsettings.jon  and binds it to the swagger options varaiable 
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
@@ -51,16 +57,9 @@ namespace Wallet.Api
                 option.SwaggerEndpoint(swaggerOptions.UiEndpoint, swaggerOptions.Description);
             });
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+           
 
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
     }
 }
